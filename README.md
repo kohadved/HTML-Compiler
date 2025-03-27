@@ -20,12 +20,6 @@ A modern HTML compiler and validator that helps you check, correct, and format y
 
 ## Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/html-compiler.git
-cd html-compiler
-```
-
 2. Install required packages:
 ```bash
 pip install -r requirements.txt
@@ -37,26 +31,9 @@ pip install -r requirements.txt
 
 To run the application in development mode:
 ```bash
-python gui.py
+streamlit run html_compiler_streamlit.py
 ```
 
-### Building Executable
-
-To create a standalone executable:
-
-1. Make sure you have all requirements installed:
-```bash
-pip install -r requirements.txt
-```
-
-2. Run the build script:
-```bash
-python build_executable.py
-```
-
-3. The executable will be created in the `dist` folder:
-   - `dist/HTML Compiler.exe` - The standalone executable
-   - `dist/HTML_Compiler.zip` - Distribution package
 
 ## Usage
 
