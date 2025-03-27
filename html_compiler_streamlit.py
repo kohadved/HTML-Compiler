@@ -198,7 +198,7 @@ def main():
                         st.error(f"Line {error['line']}: {error['message']}")
                 else:
                     st.success("HTML compiled successfully!")
-                st.experimental_rerun()
+                st.rerun()
 
     with col4:
         if st.button("Preview in Browser"):
