@@ -1,6 +1,10 @@
+import streamlit as st
 from bs4 import BeautifulSoup
 from html.parser import HTMLParser
 import re
+import tempfile
+import webbrowser
+import os
 
 class HTMLErrorCorrector(HTMLParser):
     def __init__(self):
@@ -9,6 +13,7 @@ class HTMLErrorCorrector(HTMLParser):
         self.corrected_html = []
         self.current_tag = None
         self.tag_stack = []
+        self.line_number = 1
         
     def handle_starttag(self, tag, attrs):
         self.current_tag = tag
@@ -17,11 +22,19 @@ class HTMLErrorCorrector(HTMLParser):
         
     def handle_endtag(self, tag):
         if not self.tag_stack:
-            self.errors.append(f"Closing tag </{tag}> without opening tag")
+            self.errors.append({
+                'line': self.line_number,
+                'type': 'error',
+                'message': f"Closing tag </{tag}> without opening tag"
+            })
             return
             
         if self.tag_stack[-1] != tag:
-            self.errors.append(f"Mismatched tags: expected </{self.tag_stack[-1]}>, got </{tag}>")
+            self.errors.append({
+                'line': self.line_number,
+                'type': 'error',
+                'message': f"Mismatched tags: expected </{self.tag_stack[-1]}>, got </{tag}>"
+            })
             # Auto-correct by closing the current tag and opening the correct one
             self.corrected_html.append(f"</{self.tag_stack[-1]}>")
             self.tag_stack.pop()
@@ -33,6 +46,7 @@ class HTMLErrorCorrector(HTMLParser):
             
     def handle_data(self, data):
         self.corrected_html.append(data)
+        self.line_number += data.count('\n')
         
     def handle_entityref(self, name):
         self.corrected_html.append(f"&{name};")
@@ -50,7 +64,11 @@ class HTMLErrorCorrector(HTMLParser):
         while self.tag_stack:
             tag = self.tag_stack.pop()
             self.corrected_html.append(f"</{tag}>")
-            self.errors.append(f"Missing closing tag for <{tag}>")
+            self.errors.append({
+                'line': self.line_number,
+                'type': 'error',
+                'message': f"Missing closing tag for <{tag}>"
+            })
             
         return "".join(self.corrected_html)
 
@@ -72,10 +90,10 @@ class HTMLCompiler:
         try:
             BeautifulSoup(html_content, 'html5lib')
             return True
-        except Exception:
+        except Exception as e:
             return False
     
     def format_html(self, html_content):
         """Format HTML content with proper indentation"""
         soup = BeautifulSoup(html_content, 'html5lib')
-        return soup.prettify() 
+        return soup.prettify()
