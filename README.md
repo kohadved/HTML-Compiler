@@ -87,4 +87,5 @@ For support, please open an issue in the GitHub repository or contact the contri
 
 - BeautifulSoup4 for HTML parsing
 - html5lib for HTML5 validation
-- PyInstaller for executable creation 
+- PyInstaller for executable creation
+- WebPreview to see live changes
